@@ -25,15 +25,13 @@ const int offsetB = 1;
 Motor motor1 = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor2 = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
-
 int P, D, I, previousError, PIDvalue, error;
 int lsp, rsp;
 int lfspeed = 200;
 
-float Kp = 0;
-float Kd = 0;
-float Ki = 0 ;
-
+float Kp = 0.0006;  // Adjust Kp value as needed
+float Kd = 10 * Kp;
+float Ki = 0.0001;  // Adjust Ki value as needed
 
 int minValues[6], maxValues[6], threshold[6];
 
@@ -55,31 +53,37 @@ void loop()
 
   while (1)
   {
-    if (analogRead(1) > threshold[1] && analogRead(5) < threshold[5] )
+    if (analogRead(A1) > threshold[1] && analogRead(A5) < threshold[5] )
     {
       lsp = 0; rsp = lfspeed;
       motor1.drive(0);
       motor2.drive(lfspeed);
     }
 
-    else if (analogRead(5) > threshold[5] && analogRead(1) < threshold[1])
+    else if (analogRead(A5) > threshold[5] && analogRead(A1) < threshold[1])
     { lsp = lfspeed; rsp = 0;
       motor1.drive(lfspeed);
       motor2.drive(0);
     }
-    else if (analogRead(3) > threshold[3])
+    else if (analogRead(A3) > threshold[3])
     {
-      Kp = 0.0006 * (1000 - analogRead(3));
+      Kp = 0.0006 * (1000 - analogRead(A3));  // Adjust Kp based on sensor readings
       Kd = 10 * Kp;
-      //Ki = 0.0001;
+      // Ki = 0.0001;  // Uncomment and adjust Ki if needed
       linefollow();
+    }
+    else
+    {
+      // All sensors detect black, stop the robot
+      motor1.drive(0);
+      motor2.drive(0);
     }
   }
 }
 
 void linefollow()
 {
-  int error = (analogRead(2) - analogRead(4));
+  int error = (analogRead(A2) - analogRead(A4));
 
   P = error;
   I = I + error;
@@ -106,11 +110,11 @@ void linefollow()
   motor1.drive(lsp);
   motor2.drive(rsp);
 
-  int sensorValue1 = analogRead(A0);
-  int sensorValue2 = analogRead(A1);
-  int sensorValue3 = analogRead(A2);
-  int sensorValue4 = analogRead(A3);
-  int sensorValue5 = analogRead(A4);
+  int sensorValue1 = analogRead(A1);
+  int sensorValue2 = analogRead(A2);
+  int sensorValue3 = analogRead(A3);
+  int sensorValue4 = analogRead(A4);
+  int sensorValue5 = analogRead(A5);
   
   // print out the value you read:
   
@@ -125,7 +129,6 @@ void linefollow()
   Serial.print(sensorValue5);
   Serial.println(" ");
   delay(50);
-
 }
 
 void calibrate()
