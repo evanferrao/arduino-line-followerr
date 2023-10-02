@@ -47,11 +47,11 @@ void setup()
 
 void loop()
 {
-  while (digitalRead(11)) {}
-  delay(1000);
-  calibrate();
-  while (digitalRead(12)) {}
-  delay(1000);
+  // while (digitalRead(11)) {}
+  // delay(1000);
+  // calibrate();
+  // while (digitalRead(12)) {}
+  // delay(1000);
 
   while (1)
   {
@@ -105,6 +105,26 @@ void linefollow()
   }
   motor1.drive(lsp);
   motor2.drive(rsp);
+
+  int sensorValue1 = analogRead(A0);
+  int sensorValue2 = analogRead(A1);
+  int sensorValue3 = analogRead(A2);
+  int sensorValue4 = analogRead(A3);
+  int sensorValue5 = analogRead(A4);
+  
+  // print out the value you read:
+  
+  Serial.print(sensorValue1);
+  Serial.print("   ");
+  Serial.print(sensorValue2);
+  Serial.print("   ");
+  Serial.print(sensorValue3);
+  Serial.print("   ");
+  Serial.print(sensorValue4);
+  Serial.print("   ");
+  Serial.print(sensorValue5);
+  Serial.println(" ");
+  delay(50);
 
 }
 
